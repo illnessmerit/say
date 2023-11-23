@@ -5,35 +5,8 @@
 // https://github.com/microsoft/onnxruntime-inference-examples/tree/main/js/importing_onnxruntime-web
 const ort = require('onnxruntime-web');
 
-navigator.mediaDevices.getUserMedia({ audio: true })
-  .then(function(stream) {
-    const mediaRecorder = new MediaRecorder(stream);
-    let audioChunks = [];
-
-    mediaRecorder.start();
-
-    mediaRecorder.addEventListener("dataavailable", function(event) {
-      audioChunks.push(event.data);
-    });
-
-    mediaRecorder.addEventListener("stop", function() {
-      console.log("stop");
-      const audioBlob = new Blob(audioChunks);
-      const audioUrl = URL.createObjectURL(audioBlob);
-      const audio = new Audio(audioUrl);
-      audio.play();
-    });
-
-    setTimeout(() => {
-      mediaRecorder.stop();
-    }, 1000);
-  })
-  .catch(function(err) {
-    console.error(err);
-  });
-
 // use an async context to call onnxruntime functions.
-async function main() {
+async function main(audioFrame) {
     try {
         // create a new session and load the specific model.
         //
@@ -65,4 +38,29 @@ async function main() {
     }
 }
 
-main();
+navigator.mediaDevices.getUserMedia({ audio: true })
+  .then(function(stream) {
+    const mediaRecorder = new MediaRecorder(stream);
+    let audioChunks = [];
+
+    mediaRecorder.start();
+
+    mediaRecorder.addEventListener("dataavailable", function(event) {
+      audioChunks.push(event.data);
+    });
+
+    mediaRecorder.addEventListener("stop", function() {
+      console.log("stop");
+      const audioBlob = new Blob(audioChunks);
+      const audioUrl = URL.createObjectURL(audioBlob);
+      const audio = new Audio(audioUrl);
+      audio.play();
+    });
+
+    setTimeout(() => {
+      mediaRecorder.stop();
+    }, 1000);
+  })
+  .catch(function(err) {
+    console.error(err);
+  });
