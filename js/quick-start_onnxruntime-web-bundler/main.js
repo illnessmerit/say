@@ -5,8 +5,8 @@
 // https://github.com/microsoft/onnxruntime-inference-examples/tree/main/js/importing_onnxruntime-web
 const ort = require('onnxruntime-web');
 const zeroes = Array(2 * 64).fill(0)
-const h = new ort.Tensor("float32", zeroes, [2, 1, 64]);
-const c = new ort.Tensor("float32", zeroes, [2, 1, 64]);
+let h = new ort.Tensor("float32", zeroes, [2, 1, 64]);
+let c = new ort.Tensor("float32", zeroes, [2, 1, 64]);
 const sr = new ort.Tensor("int64", [16000n])
 
 // async function blobToFloat32Array(blob) {
@@ -42,6 +42,8 @@ async function main(session, audioFrame) {
           sr: sr,
         }
         const results = await session.run(inputs);
+        h = results.hn
+        c = results.cn
         console.log(results.output.data);
 
         // read from results
