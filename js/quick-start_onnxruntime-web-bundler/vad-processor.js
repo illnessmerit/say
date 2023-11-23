@@ -14,14 +14,8 @@ const resample = (audioFrame) => {
     let outputIndex = 0;
     let inputIndex = 0;
     while (outputIndex < targetFrameSize) {
-      let sum = 0;
-      let num = 0;
-      while (inputIndex < Math.min(inputBuffer.length, outputIndex + 1)) {
-        sum += inputBuffer[inputIndex];
-        num++;
-        inputIndex++;
-      }
-      outputFrame[outputIndex] = sum / num;
+      outputFrame[outputIndex] = inputBuffer[inputIndex];
+      inputIndex++;
       outputIndex++;
     }
     inputBuffer = inputBuffer.slice(inputIndex);
