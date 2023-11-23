@@ -10,5 +10,9 @@
     "copy-webpack-plugin": "^8.1.1",
     "webpack": "^5.36.2",
     "webpack-cli": "^4.6.0"
+  },
+  "main": "main.js",
+  "scripts": {
+    "start": "electron ."
   }
 }
