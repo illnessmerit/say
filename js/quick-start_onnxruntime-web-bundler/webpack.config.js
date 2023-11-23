@@ -7,7 +7,7 @@ const CopyPlugin = require("copy-webpack-plugin");
 module.exports = () => {
     return {
         target: ['web'],
-        entry: path.resolve(__dirname, 'main.ts'),
+        entry: path.resolve(__dirname, 'main.js'),
         output: {
             path: path.resolve(__dirname, 'dist'),
             filename: 'bundle.min.js',
