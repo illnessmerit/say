@@ -15,6 +15,7 @@
     # I initially used Poetry for managing Python dependencies. However, I encountered a persistent issue when installing the project via Homebrew. The error was related to Poetry's handling of lock files in the PyPI cache directory.
     pkgs.pipenv
     pkgs.portaudio
+    pkgs.electron
   ];
 
   # https://devenv.sh/scripts/
