@@ -7,7 +7,7 @@ class VoiceActivityDetectionProcessor extends AudioWorkletProcessor {
     // parameters is an object for parameter data.
 
     // Post a message to the main thread
-    this.port.postMessage('Message from processor');
+    this.port.postMessage(inputs[0][0]);
 
     return true; // keep the processor alive
   }

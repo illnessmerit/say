@@ -3,7 +3,7 @@
 
 // see also advanced usage of importing ONNX Runtime Web:
 // https://github.com/microsoft/onnxruntime-inference-examples/tree/main/js/importing_onnxruntime-web
-// const ort = require('onnxruntime-web');
+const ort = require('onnxruntime-web');
 
 // async function blobToFloat32Array(blob) {
 //     return new Promise((resolve, reject) => {
@@ -21,40 +21,38 @@
 //     });
 // }
 
-// // use an async context to call onnxruntime functions.
-// async function main(data) {
-//     try {
-//         // create a new session and load the specific model.
-//         //
-//         const session = await ort.InferenceSession.create('./silero_vad.onnx');
+// use an async context to call onnxruntime functions.
+async function main(audioFrame) {
+    try {
+        // create a new session and load the specific model.
+        //
+        const session = await ort.InferenceSession.create('./silero_vad.onnx');
 
-//         let audioFrame = await blobToFloat32Array(data);
+        const t = new ort.Tensor("float32", audioFrame, [1, audioFrame.length])
+        const zeroes = Array(2 * 64).fill(0)
+        const h = new ort.Tensor("float32", zeroes, [2, 1, 64]);
+        const c = new ort.Tensor("float32", zeroes, [2, 1, 64]);
+        const sr = new ort.Tensor("int64", [16000n])
+        // prepare inputs. a tensor need its corresponding TypedArray as data
+        // feed inputs and run
+        //
+        const inputs = {
+          input: t,
+          h: h,
+          c: c,
+          sr: sr,
+        }
+        const results = await session.run(inputs);
+        console.log(results);
 
-//         const t = new ort.Tensor("float32", audioFrame, [1, audioFrame.length])
-//         const zeroes = Array(2 * 64).fill(0)
-//         const h = new ort.Tensor("float32", zeroes, [2, 1, 64]);
-//         const c = new ort.Tensor("float32", zeroes, [2, 1, 64]);
-//         const sr = new ort.Tensor("int64", [16000n])
-//         // prepare inputs. a tensor need its corresponding TypedArray as data
-//         // feed inputs and run
-//         //
-//         const inputs = {
-//           input: t,
-//           h: h,
-//           c: c,
-//           sr: sr,
-//         }
-//         const results = await session.run(inputs);
-//         console.log(results);
+        // read from results
+        // const dataC = results.c.data;
+        // document.write(`data of result tensor 'c': ${dataC}`);
 
-//         // read from results
-//         // const dataC = results.c.data;
-//         // document.write(`data of result tensor 'c': ${dataC}`);
-
-//     } catch (e) {
-//         document.write(`failed to inference ONNX model: ${e}.`);
-//     }
-// }
+    } catch (e) {
+        console.log(`failed to inference ONNX model: ${e}.`);
+    }
+}
 
 // navigator.mediaDevices.getUserMedia({ audio: true })
 //   .then(function(stream) {
@@ -97,7 +95,7 @@ async function init() {
 
  // Listen for messages from the processor
   vadNode.port.onmessage = (event) => {
-    console.log("Message from processor:", event.data);
+    console.log("Message from processor:", main(event.data));
   };
 }
 document.addEventListener('DOMContentLoaded', (event) => {
