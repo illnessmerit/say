@@ -26,10 +26,7 @@ stopButton.addEventListener('click', function() {
     mediaRecorder.stop();
 
     mediaRecorder.onstop = function(e) {
-        const blob = new Blob(chunks, { 'type' : 'audio/ogg; codecs=opus' });
-        chunks = [];
-        const audioURL = window.URL.createObjectURL(blob);
-        console.log(audioURL);
+        console.log(chunks);
     }
 
     stopButton.disabled = true;
