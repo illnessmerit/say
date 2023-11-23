@@ -95,7 +95,7 @@ async function init() {
 
  // Listen for messages from the processor
   vadNode.port.onmessage = (event) => {
-    console.log("Message from processor:", main(event.data));
+    console.log("Message from processor:", main(new Float32Array(event.data)));
   };
 }
 document.addEventListener('DOMContentLoaded', (event) => {
