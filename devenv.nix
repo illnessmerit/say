@@ -55,6 +55,7 @@
   # https://devenv.sh/languages/
   # languages.nix.enable = true;
   languages.haskell.enable = true;
+  languages.javascript.enable = true;
   languages.python.enable = true;
 
   # https://devenv.sh/pre-commit-hooks/
