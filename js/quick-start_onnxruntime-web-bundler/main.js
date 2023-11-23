@@ -4,6 +4,10 @@
 // see also advanced usage of importing ONNX Runtime Web:
 // https://github.com/microsoft/onnxruntime-inference-examples/tree/main/js/importing_onnxruntime-web
 const ort = require('onnxruntime-web');
+const zeroes = Array(2 * 64).fill(0)
+const h = new ort.Tensor("float32", zeroes, [2, 1, 64]);
+const c = new ort.Tensor("float32", zeroes, [2, 1, 64]);
+const sr = new ort.Tensor("int64", [16000n])
 
 // async function blobToFloat32Array(blob) {
 //     return new Promise((resolve, reject) => {
@@ -22,17 +26,12 @@ const ort = require('onnxruntime-web');
 // }
 
 // use an async context to call onnxruntime functions.
-async function main(audioFrame) {
+async function main(session, audioFrame) {
     try {
         // create a new session and load the specific model.
         //
-        const session = await ort.InferenceSession.create('./silero_vad.onnx');
 
         const t = new ort.Tensor("float32", audioFrame, [1, audioFrame.length])
-        const zeroes = Array(2 * 64).fill(0)
-        const h = new ort.Tensor("float32", zeroes, [2, 1, 64]);
-        const c = new ort.Tensor("float32", zeroes, [2, 1, 64]);
-        const sr = new ort.Tensor("int64", [16000n])
         // prepare inputs. a tensor need its corresponding TypedArray as data
         // feed inputs and run
         //
@@ -92,10 +91,11 @@ async function init() {
   const source = audioContext.createMediaStreamSource(stream);
   source.connect(vadNode);
   vadNode.connect(audioContext.destination);
+  const session = await ort.InferenceSession.create('./silero_vad.onnx');
 
  // Listen for messages from the processor
   vadNode.port.onmessage = (event) => {
-    console.log("Message from processor:", main(new Float32Array(event.data)));
+    console.log("Message from processor:", main(session, new Float32Array(event.data)));
   };
 }
 document.addEventListener('DOMContentLoaded', (event) => {
