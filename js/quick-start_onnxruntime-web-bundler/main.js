@@ -42,7 +42,7 @@ async function main(session, audioFrame) {
           sr: sr,
         }
         const results = await session.run(inputs);
-        console.log(results);
+        console.log(results.output.data);
 
         // read from results
         // const dataC = results.c.data;
