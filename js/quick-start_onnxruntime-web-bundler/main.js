@@ -7,10 +7,29 @@ const ort = require('onnxruntime-web');
 
 navigator.mediaDevices.getUserMedia({ audio: true })
   .then(function(stream) {
-    /* use the stream */
+    const mediaRecorder = new MediaRecorder(stream);
+    let audioChunks = [];
+
+    mediaRecorder.start();
+
+    mediaRecorder.addEventListener("dataavailable", function(event) {
+      audioChunks.push(event.data);
+    });
+
+    mediaRecorder.addEventListener("stop", function() {
+      console.log("stop");
+      const audioBlob = new Blob(audioChunks);
+      const audioUrl = URL.createObjectURL(audioBlob);
+      const audio = new Audio(audioUrl);
+      audio.play();
+    });
+
+    setTimeout(() => {
+      mediaRecorder.stop();
+    }, 1000);
   })
   .catch(function(err) {
-    /* handle the error */
+    console.error(err);
   });
 
 // use an async context to call onnxruntime functions.
