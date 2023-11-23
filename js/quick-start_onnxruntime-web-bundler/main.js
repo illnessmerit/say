@@ -28,9 +28,8 @@
 //         //
 //         const session = await ort.InferenceSession.create('./silero_vad.onnx');
 
-        
 //         let audioFrame = await blobToFloat32Array(data);
-        
+
 //         const t = new ort.Tensor("float32", audioFrame, [1, audioFrame.length])
 //         const zeroes = Array(2 * 64).fill(0)
 //         const h = new ort.Tensor("float32", zeroes, [2, 1, 64]);
@@ -90,11 +89,22 @@ let audioContext = new (window.AudioContext || window.webkitAudioContext)();
 
 async function init() {
   const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-  await audioContext.audioWorklet.addModule('vad-processor.js');
-  const vadNode = new AudioWorkletNode(audioContext, 'vad-processor');
+  await audioContext.audioWorklet.addModule("vad-processor.js");
+  const vadNode = new AudioWorkletNode(audioContext, "vad-processor");
   const source = audioContext.createMediaStreamSource(stream);
   source.connect(vadNode);
   vadNode.connect(audioContext.destination);
-};
 
-init();
+ // Listen for messages from the processor
+  vadNode.port.onmessage = (event) => {
+    console.log("Message from processor:", event.data);
+  };
+}
+document.addEventListener('DOMContentLoaded', (event) => {
+  document.querySelector('#startButton').addEventListener('click', function() {
+    audioContext.resume().then(() => {
+      console.log('Playback resumed successfully');
+      init();
+    });
+  });
+});
