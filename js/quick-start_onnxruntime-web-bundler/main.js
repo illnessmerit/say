@@ -84,7 +84,7 @@ async function main(session, audioFrame) {
 //   });
 
 // main.js
-let audioContext = new (window.AudioContext || window.webkitAudioContext)();
+let audioContext = new (window.AudioContext || window.webkitAudioContext)({sampleRate: 16000});
 
 async function init() {
   const stream = await navigator.mediaDevices.getUserMedia({ audio: true });

@@ -5,30 +5,18 @@ const targetFrameSize = 1536;
 const resample = (audioFrame) => {
   const outputFrames = [];
 
-
   for (const sample of audioFrame) {
     inputBuffer.push(sample);
   }
 
-  while (
-    (inputBuffer.length * targetSampleRate) /
-      nativeSampleRate >
-    targetFrameSize
-  ) {
+  while (inputBuffer.length > targetFrameSize) {
     const outputFrame = new Float32Array(targetFrameSize);
     let outputIndex = 0;
     let inputIndex = 0;
     while (outputIndex < targetFrameSize) {
       let sum = 0;
       let num = 0;
-      while (
-        inputIndex <
-        Math.min(
-          inputBuffer.length,
-          ((outputIndex + 1) * nativeSampleRate) /
-            targetSampleRate
-        )
-      ) {
+      while (inputIndex < Math.min(inputBuffer.length, outputIndex + 1)) {
         sum += inputBuffer[inputIndex];
         num++;
         inputIndex++;
