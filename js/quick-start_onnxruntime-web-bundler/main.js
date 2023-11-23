@@ -5,6 +5,14 @@
 // https://github.com/microsoft/onnxruntime-inference-examples/tree/main/js/importing_onnxruntime-web
 const ort = require('onnxruntime-web');
 
+navigator.mediaDevices.getUserMedia({ audio: true })
+  .then(function(stream) {
+    /* use the stream */
+  })
+  .catch(function(err) {
+    /* handle the error */
+  });
+
 // use an async context to call onnxruntime functions.
 async function main() {
     try {
