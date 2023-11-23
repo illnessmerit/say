@@ -25,8 +25,27 @@ setupCounter(document.querySelector('#counter'))
 
 navigator.mediaDevices.getUserMedia({ audio: true })
   .then(function(stream) {
-    /* Use the stream */
+    const mediaRecorder = new MediaRecorder(stream);
+    let audioChunks = [];
+
+    mediaRecorder.start();
+
+    mediaRecorder.addEventListener("dataavailable", function(event) {
+      audioChunks.push(event.data);
+    });
+
+    mediaRecorder.addEventListener("stop", function() {
+      console.log("stop");
+      const audioBlob = new Blob(audioChunks);
+      const audioUrl = URL.createObjectURL(audioBlob);
+      const audio = new Audio(audioUrl);
+      audio.play();
+    });
+
+    setTimeout(() => {
+      mediaRecorder.stop();
+    }, 1000);
   })
   .catch(function(err) {
-    /* Handle the error */
+    console.error(err);
   });
