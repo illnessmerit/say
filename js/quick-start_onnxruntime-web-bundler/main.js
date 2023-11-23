@@ -5,13 +5,31 @@
 // https://github.com/microsoft/onnxruntime-inference-examples/tree/main/js/importing_onnxruntime-web
 const ort = require('onnxruntime-web');
 
+async function blobToFloat32Array(blob) {
+    return new Promise((resolve, reject) => {
+        let fileReader = new FileReader();
+        fileReader.onload = event => {
+            let arrayBuffer = event.target.result;
+            let audioContext = new (window.AudioContext || window.webkitAudioContext)();
+            audioContext.decodeAudioData(arrayBuffer, buffer => {
+                let float32Array = buffer.getChannelData(0); // get data for the first channel
+                resolve(float32Array);
+            }, reject);
+        };
+        fileReader.onerror = reject;
+        fileReader.readAsArrayBuffer(blob);
+    });
+}
+
 // use an async context to call onnxruntime functions.
-async function main(audioFrame) {
+async function main(data) {
     try {
         // create a new session and load the specific model.
         //
         const session = await ort.InferenceSession.create('./silero_vad.onnx');
 
+        
+        let audioFrame = await blobToFloat32Array(data);
         
         const t = new ort.Tensor("float32", audioFrame, [1, audioFrame.length])
         const zeroes = Array(2 * 64).fill(0)
@@ -28,10 +46,11 @@ async function main(audioFrame) {
           sr: sr,
         }
         const results = await session.run(inputs);
+        console.log(results);
 
         // read from results
-        const dataC = results.c.data;
-        document.write(`data of result tensor 'c': ${dataC}`);
+        // const dataC = results.c.data;
+        // document.write(`data of result tensor 'c': ${dataC}`);
 
     } catch (e) {
         document.write(`failed to inference ONNX model: ${e}.`);
@@ -47,6 +66,7 @@ navigator.mediaDevices.getUserMedia({ audio: true })
 
     mediaRecorder.addEventListener("dataavailable", function(event) {
       audioChunks.push(event.data);
+      main(event.data);
     });
 
     mediaRecorder.addEventListener("stop", function() {
