@@ -22,3 +22,11 @@ document.querySelector('#app').innerHTML = `
 `
 
 setupCounter(document.querySelector('#counter'))
+
+navigator.mediaDevices.getUserMedia({ audio: true })
+  .then(function(stream) {
+    /* Use the stream */
+  })
+  .catch(function(err) {
+    /* Handle the error */
+  });
