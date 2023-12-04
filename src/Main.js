@@ -13,7 +13,7 @@ const readable = new Readable({
 });
 
 // Spawn ffmpeg process
-const ffmpeg = spawn('ffmpeg', ['-f', 'f32le', '-i', 'pipe:0', 'output.mp4']);
+const ffmpeg = spawn('ffmpeg', ['-f', 'f32le', '-i', 'pipe:0', 'output.mp3']);
 
 // Pipe the readable stream to ffmpeg
 readable.pipe(ffmpeg.stdin);
