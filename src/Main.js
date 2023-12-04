@@ -24,8 +24,6 @@ ffmpeg.stderr.on('data', (data) => {
   console.error(`ffmpeg stderr: ${data}`);
 });
 
-readable.push(Buffer.from(new Float32Array([1.0, 2.0, 3.0, 4.0]).buffer));
-// readable.push(null); // Indicates end of data
 
 const createWindow = () => {
   const win = new BrowserWindow({
@@ -46,10 +44,12 @@ export const launch = (record) => (process) => () => {
 
     globalShortcut.register("Command+;", () => {
       console.log("Command+; is pressed");
+      readable.push(null); // Indicates end of data
       process();
     });
 
     ipcMain.on("audio", (_, data) => {
+      readable.push(Buffer.from(new Float32Array([1.0, 2.0, 3.0, 4.0]).buffer));
       record(data)();
     });
   });
