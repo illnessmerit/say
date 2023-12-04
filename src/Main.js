@@ -4,6 +4,20 @@ import { app, BrowserWindow, globalShortcut, ipcMain } from "electron";
 import { spawn } from 'child_process';
 import { Readable } from 'stream';
 
+import { createClient } from "@deepgram/sdk";
+const deepgram = createClient(DEEPGRAM_API_KEY);
+
+const { result, error } = await deepgram.listen.prerecorded.transcribeUrl(
+  {
+    url: "https://dpgr.am/spacewalk.wav",
+  },
+  {
+    model: "nova",
+  }
+);
+
+console.log(result.results.channels[0].alternatives[0].transcript);
+
 // Create a readable stream
 const readable = new Readable({
   read() {
