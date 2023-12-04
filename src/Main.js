@@ -1,43 +1,58 @@
 // https://www.electronjs.org/docs/latest/tutorial/quick-start#create-a-web-page
 import { app, BrowserWindow, globalShortcut, ipcMain } from "electron";
 
-import { spawn } from 'child_process';
-import { Readable } from 'stream';
+import { spawn } from "child_process";
+import { Readable } from "stream";
 
 import { createClient } from "@deepgram/sdk";
 const deepgram = createClient(DEEPGRAM_API_KEY);
 
-const { result, error } = await deepgram.listen.prerecorded.transcribeUrl(
-  {
-    url: "https://dpgr.am/spacewalk.wav",
-  },
-  {
-    model: "nova",
-  }
-);
-
-console.log(result.results.channels[0].alternatives[0].transcript);
+deepgram.listen.prerecorded
+  .transcribeUrl(
+    {
+      url: "https://dpgr.am/spacewalk.wav",
+    },
+    {
+      model: "nova",
+    }
+  )
+  .then(({ result, error }) => {
+    if (error) {
+      console.error(error);
+      return;
+    }
+    console.log(result.results.channels[0].alternatives[0].transcript);
+  })
+  .catch((err) => {
+    console.error(err);
+  });
 
 // Create a readable stream
 const readable = new Readable({
-  read() {
-  }
+  read() {},
 });
 
 // Spawn ffmpeg process
-const ffmpeg = spawn('ffmpeg', ['-f', 'f32le', '-i', 'pipe:0', '-f', 'opus', 'pipe:1']);
+const ffmpeg = spawn("ffmpeg", [
+  "-f",
+  "f32le",
+  "-i",
+  "pipe:0",
+  "-f",
+  "opus",
+  "pipe:1",
+]);
 
 // Pipe the readable stream to ffmpeg
 readable.pipe(ffmpeg.stdin);
 
-ffmpeg.on('close', (code) => {
+ffmpeg.on("close", (code) => {
   console.log(`ffmpeg exited with code ${code}`);
 });
 
-ffmpeg.stderr.on('data', (data) => {
+ffmpeg.stderr.on("data", (data) => {
   console.error(`ffmpeg stderr: ${data}`);
 });
-
 
 const createWindow = () => {
   const win = new BrowserWindow({
