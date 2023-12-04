@@ -49,7 +49,7 @@ export const launch = (record) => (process) => () => {
     });
 
     ipcMain.on("audio", (_, data) => {
-      readable.push(Buffer.from(new Float32Array([1.0, 2.0, 3.0, 4.0]).buffer));
+      readable.push(Buffer.from(data.buffer));
       record(data)();
     });
   });
