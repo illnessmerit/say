@@ -6,10 +6,6 @@ import { Readable } from 'stream';
 
 // Create a readable stream
 const readable = new Readable({
-  read() {
-    this.push(Buffer.from(new Float32Array([1.0, 2.0, 3.0, 4.0]).buffer));
-    this.push(null); // Indicates end of data
-  }
 });
 
 // Spawn ffmpeg process
