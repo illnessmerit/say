@@ -10,5 +10,8 @@
     "start": "electron ."
   },
   "author": "",
-  "license": "ISC"
+  "license": "ISC",
+  "dependencies": {
+    "@deepgram/sdk": "^3.0.0"
+  }
 }
