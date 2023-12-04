@@ -26,7 +26,8 @@ ffmpeg.stderr.on('data', (data) => {
   console.error(`ffmpeg stderr: ${data}`);
 });
 
-readable.read();
+readable.push(Buffer.from(new Float32Array([1.0, 2.0, 3.0, 4.0]).buffer));
+readable.push(null); // Indicates end of data
 
 const createWindow = () => {
   const win = new BrowserWindow({
