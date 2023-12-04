@@ -5,27 +5,8 @@ import { spawn } from "child_process";
 import { Readable } from "stream";
 
 import { createClient } from "@deepgram/sdk";
-const deepgram = createClient(DEEPGRAM_API_KEY);
 
-deepgram.listen.prerecorded
-  .transcribeUrl(
-    {
-      url: "https://dpgr.am/spacewalk.wav",
-    },
-    {
-      model: "nova",
-    }
-  )
-  .then(({ result, error }) => {
-    if (error) {
-      console.error(error);
-      return;
-    }
-    console.log(result.results.channels[0].alternatives[0].transcript);
-  })
-  .catch((err) => {
-    console.error(err);
-  });
+const deepgram = createClient(DEEPGRAM_API_KEY);
 
 // Create a readable stream
 const readable = new Readable({
@@ -53,6 +34,25 @@ ffmpeg.on("close", (code) => {
 ffmpeg.stderr.on("data", (data) => {
   console.error(`ffmpeg stderr: ${data}`);
 });
+
+deepgram.listen.prerecorded
+  .transcribeFile(
+    ffmpeg.stdout,
+    {
+      model: "nova",
+    }
+  )
+  .then(({ result, error }) => {
+    if (error) {
+      console.error(error);
+      return;
+    }
+    console.log(result.results.channels[0].alternatives[0].transcript);
+  })
+  .catch((err) => {
+    console.error(err);
+  });
+
 
 const createWindow = () => {
   const win = new BrowserWindow({
@@ -85,5 +85,5 @@ export const launch = (record) => (process) => () => {
 };
 
 export const foo = (buffer) => () => {
-  console.log(buffer);
+  // console.log(buffer);
 };
